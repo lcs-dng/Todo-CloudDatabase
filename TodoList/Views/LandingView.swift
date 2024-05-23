@@ -19,7 +19,7 @@ struct LandingView: View {
     
     // The view model
     @State var viewModel = TodoListViewModel()
-
+    
     // MARK: Computed properties
     var body: some View {
         NavigationView {
@@ -27,9 +27,9 @@ struct LandingView: View {
             VStack {
                 
                 List($viewModel.todos) { $todo in
-
+                    
                     ItemView(currentItem: $todo)
-                        // Delete item
+                    // Delete item
                         .swipeActions {
                             Button(
                                 "Delete",
@@ -42,6 +42,11 @@ struct LandingView: View {
                     
                 }
                 .searchable(text: $searchText)
+                .onChange(of: searchText) {
+                    Task {
+                        try await viewModel.filterTodos(on: searchText)
+                    }
+                }
                 
                 HStack {
                     TextField("Enter a to-do item", text: $newItemDescription)
